@@ -1,0 +1,2 @@
+class TypeOfGame
+end
