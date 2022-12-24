@@ -1,47 +1,80 @@
 class Board
-  attr_reader :board
+  attr_reader :positions
 
   def initialize
-    @board = %w[0 1 2 3 4 5 6 7 8]
-    @palyer_one = 'X'
-    @palyer_two = 'O'
+    @positions = %w[0 1 2 3 4 5 6 7 8]
   end
 
-  def print_board
-    puts " #{@board[0]} | #{@board[1]} | #{@board[2]} \n===+===+===\n #{@board[3]} | #{@board[4]} | #{@board[5]} \n===+===+===\n #{@board[6]} | #{@board[7]} | #{@board[8]} \n"
+  def game_over?
+    any_winner? || tie?
+  end
+
+  def print
+    puts "\e[1m\e[34m===========\e[0m"
+    puts " #{colorize(@positions[0])} \e[1m\e[34m|\e[0m #{colorize(@positions[1])} \e[1m\e[34m|\e[0m #{colorize(@positions[2])}"
+    puts "\e[1m\e[34m===+===+===\e[0m"
+    puts " #{colorize(@positions[3])} \e[1m\e[34m|\e[0m #{colorize(@positions[4])} \e[1m\e[34m|\e[0m #{colorize(@positions[5])}"
+    puts "\e[1m\e[34m===+===+===\e[0m"
+    puts " #{colorize(@positions[6])} \e[1m\e[34m|\e[0m #{colorize(@positions[7])} \e[1m\e[34m|\e[0m #{colorize(@positions[8])}"
+    puts "\e[1m\e[34m===========\e[0m"
+  end
+
+  def available_spaces
+    @positions.filter_map do |value|
+      value if spot_not_occupied?(value)
+    end
+  end
+
+  def any_winner?
+    options.any? { |option| option.uniq.length == 1 }
+  end
+
+  def assign_spot_to(player:, spot:)
+    @positions[spot] = player.character
+  end
+
+  def spot_occupied_by_player?(value)
+    player_options.include? value
+  end
+
+  def position_occupied_by_player?(value)
+    player_options.include? @positions[value]
   end
 
   def middle_free?
-    @board[4] == '4'
+    @positions[4] == '4'
   end
 
-  def assign_spot_to(spot, player)
-    @board[spot] = player
+  def tie?
+    @positions.all? { |value| spot_occupied_by_player?(value) }
   end
 
-  def space_not_occupied?(space)
-    space_not_occupied_by_user?(space) && space_not_occupied_by_computer?(space)
+  private
+
+  def player_options
+    %w[X O]
   end
 
-  def space_occupied_by_user?(space)
-    !space_not_occupied_by_user?(space)
+  def colorize(value)
+    return value unless spot_occupied_by_player?(value)
+    return "\e[1m\e[33m#{value}\e[0m" if value == 'O'
+    return "\e[1m\e[32m#{value}\e[0m" if value == 'X'
   end
 
-  def space_occupied_by_computer?(space)
-    !space_not_occupied_by_computer?(space)
+  def options
+    [
+      [@positions[0], @positions[1], @positions[2]],
+      [@positions[3], @positions[4], @positions[5]],
+      [@positions[6], @positions[7], @positions[8]],
+      [@positions[0], @positions[3], @positions[6]],
+      [@positions[1], @positions[4], @positions[7]],
+      [@positions[2], @positions[5], @positions[8]],
+      [@positions[0], @positions[4], @positions[8]],
+      [@positions[2], @positions[4], @positions[6]]
+    ]
   end
 
-  def spot_not_occupied_by_palyer_two?(spot)
-    spot != 'O'
-  end
-
-  def spot_not_occupied_by_palyer_one?(spot)
-    spot != 'X'
-  end
-
-  def available_spaces(board)
-    board.filter_map do |space|
-      space if space_not_occupied?(space)
-    end
+  def spot_not_occupied?(value)
+    !spot_occupied_by_player?(value)
   end
 end
