@@ -4,6 +4,12 @@ The first commit of this repository contains a code for a tic tac toe game in ba
 
 The meaning of this repository was to improve game logic and add some features(PvP, PvE, EvE and Easy, Moderate and Challenging Level).
 
+# How to play?
+
+You will need Ruby installed in your machine.
+
+Just clone this repository and run: *ruby game.rb*
+
 # PvP
 
 ![pvp](https://user-images.githubusercontent.com/43658712/209451336-c9c51d36-ba9e-4574-8fdd-4c28b06613de.gif)
